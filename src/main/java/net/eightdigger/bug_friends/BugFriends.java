@@ -1,7 +1,8 @@
-package net.eightdigger.beetlefriends;
+package net.eightdigger.bug_friends;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.Minecraft;
+import net.eightdigger.bug_friends.item.ModItems;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -15,21 +16,17 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(BeetleFriends.MOD_ID)
-public class BeetleFriends
+@Mod(BugFriends.MOD_ID)
+public class BugFriends
 {
-    // Define mod id in a common place for everything to reference
-    public static final String MOD_ID = "beetle_friends";
-    // Directly reference a slf4j logger
+    public static final String MOD_ID = "bug_friends";
     private static final Logger LOGGER = LogUtils.getLogger();
-    public BeetleFriends()
+    public BugFriends()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
+        ModItems.register(modEventBus);
         modEventBus.addListener(this::commonSetup);
-
         MinecraftForge.EVENT_BUS.register(this);
-
         modEventBus.addListener(this::addCreative);
 
     }
@@ -37,21 +34,19 @@ public class BeetleFriends
 
     }
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-
+        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+            event.accept(ModItems.BEETLE_HUSK);
+        }
     }
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
 
     }
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents
-    {
+    public static class ClientModEvents {
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event)
-        {
-            // Some client setup code
-            LOGGER.info("HELLO FROM CLIENT SETUP");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        public static void onClientSetup(FMLClientSetupEvent event) {
+
         }
     }
 }
