@@ -1,7 +1,10 @@
 package net.eightdigger.bug_friends;
 
 import com.mojang.logging.LogUtils;
+import net.eightdigger.bug_friends.entity.ModEntities;
+import net.eightdigger.bug_friends.entity.client.BeetleRenderer;
 import net.eightdigger.bug_friends.item.ModItems;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -15,6 +18,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
+import javax.swing.text.html.parser.Entity;
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(BugFriends.MOD_ID)
 public class BugFriends
@@ -24,7 +29,11 @@ public class BugFriends
     public BugFriends()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
         ModItems.register(modEventBus);
+
+        ModEntities.register((modEventBus));
+
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);
         modEventBus.addListener(this::addCreative);
@@ -37,6 +46,13 @@ public class BugFriends
         if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
             event.accept(ModItems.BEETLE_HUSK);
         }
+        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+            event.accept(ModItems.GOLDEN_BEETLE_HUSK);
+        }
+        if(event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
+            event.accept(ModItems.BEETLE_SPAWN_EGG);
+        }
+
     }
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
@@ -46,7 +62,7 @@ public class BugFriends
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-
+            EntityRenderers.register(ModEntities.BEETLE.get(), BeetleRenderer::new);
         }
     }
 }
